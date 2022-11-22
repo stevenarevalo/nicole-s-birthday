@@ -1,56 +1,112 @@
-/*
-=========================================================
-* Material Kit 2 React - v2.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
+import React from "react";
 // @mui material components
 import Card from "@mui/material/Card";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 
-// Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
-// Author page sections
-import Profile from "pages/LandingPages/Author/sections/Profile";
-import Posts from "pages/LandingPages/Author/sections/Posts";
-import Contact from "pages/LandingPages/Author/sections/Contact";
-import Footer from "pages/LandingPages/Author/sections/Footer";
-
 // Routes
-import routes from "routes";
 
 // Images
-import bgImage from "assets/images/city-profile.jpg";
+import bgImage from "assets/images/fep.jpg";
+import axios from "axios";
+import Posts from "./sections/Posts";
 
-function Author() {
+const thursday = [
+  "blink-182",
+  "tame impala",
+  "the 1975",
+  "cut copy",
+  "melanie martinez",
+  "wallows",
+  "cigarretes after sex",
+  "sofi tukker",
+  "purple disco machine",
+  "100 gecs",
+  "lika nova",
+  "higuita en chanclas",
+];
+const friday = [
+  "the chemical brothers",
+  "wu-tang clan",
+  "bizarrap",
+  "armin van burren",
+  "moderat",
+  "ryan castro",
+  "trueno",
+  "alci acosta",
+  "gorogn city",
+  "la perla",
+];
+const saturday = [
+  "drake",
+  "rosalia",
+  "blondie",
+  "tove lo",
+  "jerry rivera",
+  "fred again",
+  "aurora",
+  "omar apollo",
+  "willow",
+];
+const sunday = [
+  "billie eilish",
+  "lil nas x",
+  "morat",
+  "jamie xx",
+  "kali uchis",
+  "polo & pan",
+  "bandalos chinos",
+  "modest mouse",
+  "elsa y el mar",
+];
+function Author(token) {
+  const [artists, setArtists] = React.useState([]);
+  const matchingArtist = [];
+  /* const capitalizeWords = (arr) =>
+    arr.map(
+      (element) => element.name.charAt(0).toUpperCase() + element.name.slice(1).toLowerCase()
+    ); */
+  const requestAPI = async () => {
+    try {
+      const res = await axios.get(
+        `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=100&offset=0`,
+        {
+          headers: { Authorization: `Bearer ${token.token}` },
+          params: {},
+        }
+      );
+      const spotiArtists = res.data?.items?.map((artist) => artist.name.toLowerCase());
+      const thursdayMatch = thursday.filter((artist) => spotiArtists?.includes(artist));
+      matchingArtist.push(...thursdayMatch);
+      const fridayMatch = friday.filter((artist) => spotiArtists?.includes(artist));
+      matchingArtist.push(...fridayMatch);
+      const saturdayMatch = saturday.filter((artist) => spotiArtists?.includes(artist));
+      matchingArtist.push(...saturdayMatch);
+      const sundayMatch = sunday.filter((artist) => spotiArtists?.includes(artist));
+      matchingArtist.push(...sundayMatch);
+
+      const artistFull = res.data?.items?.map((artist) => ({
+        name: artist.name,
+        image: artist.images[0].url,
+      }));
+
+      setArtists(
+        artistFull.filter((artist) => matchingArtist?.includes(artist.name.toLowerCase()))
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  React.useEffect(() => {
+    requestAPI();
+  }, []);
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "info",
-        }}
-        transparent
-        light
-      />
       <MKBox bgColor="white">
         <MKBox
-          minHeight="25rem"
+          minHeight="30rem"
           width="100%"
           sx={{
             backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
@@ -58,7 +114,7 @@ function Author() {
                 rgba(gradients.dark.main, 0.8),
                 rgba(gradients.dark.state, 0.8)
               )}, url(${bgImage})`,
-            backgroundSize: "cover",
+            backgroundSize: "fit",
             backgroundPosition: "center",
             display: "grid",
             placeItems: "center",
@@ -75,11 +131,8 @@ function Author() {
             boxShadow: ({ boxShadows: { xxl } }) => xxl,
           }}
         >
-          <Profile />
-          <Posts />
+          <Posts artists={artists} />
         </Card>
-        <Contact />
-        <Footer />
       </MKBox>
     </>
   );
