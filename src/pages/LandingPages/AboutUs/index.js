@@ -24,10 +24,6 @@ import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
 // Material Kit 2 React examples
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-
-// Routes
-import routes from "routes";
 
 // Images
 import bgImage from "assets/images/bg-about-us.jpg";
@@ -52,17 +48,6 @@ window.location.hash = "";
 function AboutUs() {
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "default",
-        }}
-        transparent
-        light
-      />
       {!hash2?.access_token && (
         <MKBox
           minHeight="75vh"

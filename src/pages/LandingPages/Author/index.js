@@ -62,6 +62,7 @@ const sunday = [
 ];
 function Author(token) {
   const [artists, setArtists] = React.useState([]);
+  const [fepArtists, setFepArtists] = React.useState([]);
   const matchingArtist = [];
   /* const capitalizeWords = (arr) =>
     arr.map(
@@ -70,7 +71,7 @@ function Author(token) {
   const requestAPI = async () => {
     try {
       const res = await axios.get(
-        `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=100&offset=0`,
+        `https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=100&offset=0`,
         {
           headers: { Authorization: `Bearer ${token.token}` },
           params: {},
@@ -91,7 +92,8 @@ function Author(token) {
         image: artist.images[0].url,
       }));
 
-      setArtists(
+      setArtists(artistFull.slice(0, 26));
+      setFepArtists(
         artistFull.filter((artist) => matchingArtist?.includes(artist.name.toLowerCase()))
       );
     } catch (err) {
@@ -131,7 +133,7 @@ function Author(token) {
             boxShadow: ({ boxShadows: { xxl } }) => xxl,
           }}
         >
-          <Posts artists={artists} />
+          <Posts artists={artists} fepArtists={fepArtists} />
         </Card>
       </MKBox>
     </>
